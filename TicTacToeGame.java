@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class TicTacToeGame {
-    private Board board;
+    private TicTacToeBoard board;
     private JFrame frame;
     private JButton[][] buttons;
     private String currentPlayer;
@@ -80,7 +80,7 @@ public class TicTacToeGame {
 
     private void initializeGame() {
         // Initialize game components after the mode has been selected
-        board = new Board();
+        board = new TicTacToeBoard();
         buttons = new JButton[3][3];
         currentPlayer = "X"; // Player X starts
         xWins = 0;
@@ -232,7 +232,7 @@ public class TicTacToeGame {
     }    
 
     private void resetGame() {
-        board = new Board();
+        board = new TicTacToeBoard();
         currentPlayer = "X"; // Reset to player "X"
 
         for (int row = 0; row < 3; row++) {

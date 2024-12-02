@@ -1,14 +1,14 @@
 import java.util.ArrayList;
 
-public class Board {
+public class TicTacToeBoard {
 
     private String[][] board = {{" ", " ", " "},
                                  {" ", " ", " "},
                                  {" ", " ", " "}};
     
-    public Board() {}
+    public TicTacToeBoard() {}
     
-    private Board(String[][] board) {
+    private TicTacToeBoard(String[][] board) {
         String[][] filledBoard = {{" ", " ", " "},
                                   {" ", " ", " "},
                                   {" ", " ", " "}};
@@ -24,8 +24,8 @@ public class Board {
         return board;
     }
 
-    public Board cloneBoard() {
-        return new Board(getBoardLayout());
+    public TicTacToeBoard cloneBoard() {
+        return new TicTacToeBoard(getBoardLayout());
     }
 
     public int[] availableMoves() {
@@ -102,7 +102,7 @@ public class Board {
         bestValue = isMaximizing ? Integer.MIN_VALUE : Integer.MAX_VALUE;
     
         for (int move : availableMoves()) {
-            Board newBoard = cloneBoard();
+            TicTacToeBoard newBoard = cloneBoard();
             newBoard.setSpace(move, symbol);
     
             int hypotheticalValue = newBoard.minimax(!isMaximizing, depth - 1)[0];
