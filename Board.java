@@ -94,25 +94,25 @@ public class Board {
         int bestValue = 0;
         int bestMove = 0;
         String symbol = isMaximizing ? "X" : "O";
-
+    
         if (gameIsOver() || depth == 0) {
             return new int[] { evaluateBoard(), 0 };
         }
-
+    
         bestValue = isMaximizing ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-
+    
         for (int move : availableMoves()) {
             Board newBoard = cloneBoard();
             newBoard.setSpace(move, symbol);
-
+    
             int hypotheticalValue = newBoard.minimax(!isMaximizing, depth - 1)[0];
-
+    
             if ((isMaximizing && hypotheticalValue > bestValue) || (!isMaximizing && hypotheticalValue < bestValue)) {
                 bestValue = hypotheticalValue;
                 bestMove = move;
             }
         }
-
+    
         return new int[] { bestValue, bestMove };
-    }
+    }    
 }
