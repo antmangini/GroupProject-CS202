@@ -5,21 +5,21 @@ public class Board {
     private String[][] board = {{" ", " ", " "},
                                  {" ", " ", " "},
                                  {" ", " ", " "}};
-
+    
     public Board() {}
-
+    
     private Board(String[][] board) {
         String[][] filledBoard = {{" ", " ", " "},
                                   {" ", " ", " "},
                                   {" ", " ", " "}};
-
+        
         for (int row = 0; row < filledBoard.length; row++) {
             for (int col = 0; col < filledBoard[row].length; col++)
                 filledBoard[row][col] = board[row][col];
         }
         this.board = filledBoard;
     }
-
+    
     private String[][] getBoardLayout() {
         return board;
     }
@@ -47,7 +47,7 @@ public class Board {
         return moves;
     }
 
-    private int[] getSpotOnBoard(int space) {
+    public int[] getSpotOnBoard(int space) {
         int row = (space - 1) / 3;
         int col = (space - 1) % 3;
         return new int[] { row, col };
