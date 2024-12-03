@@ -2,29 +2,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-public class TicTacToeGame {
-    private TicTacToeBoard board;
+public class ConnectFourGame {
     private JFrame frame;
+    private JPanel modePanel;
+    private JButton playerButton;
+    private JButton aiButton;
+    private ConnectFourBoard board;
     private JButton[][] buttons;
     private String currentPlayer;
-    private int xWins, oWins, draws;
+    private int xWins;
+    private int oWins;
+    private int draws;
     private JLabel scoreLabel;
-    private String gameMode;  // "Player vs Player" or "Player vs AI"
-    private int aiDifficulty; // AI difficulty level (1 to 10)
+    private String gameMode;
+    private int aiDifficulty;
 
-    public TicTacToeGame(Point location) {
-        // Initial setup of the frame and components
-        frame = new JFrame("Tic Tac Toe");
+    public ConnectFourGame(Point location) {
+        frame = new JFrame("Connect Four");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout()); // Use BorderLayout to arrange components
+        frame.setLayout(new BorderLayout());
         frame.setLocation(location); // Set the location of the new frame
 
-        // Create a panel for the game mode selection buttons
-        JPanel modePanel = new JPanel(new GridLayout(1, 2));
-        
-        JButton playerButton = new JButton("Player vs Player");
-        JButton aiButton = new JButton("Player vs AI");
+        modePanel = new JPanel(new GridLayout(1, 2));
+        playerButton = new JButton("Player vs Player");
+        aiButton = new JButton("Player vs AI");
 
         playerButton.addActionListener(new ActionListener() {
             @Override
@@ -47,24 +50,17 @@ public class TicTacToeGame {
 
         // Add the mode selection panel to the frame
         frame.add(modePanel, BorderLayout.CENTER);
-
         frame.setSize(400, 200); // Set size for mode selection window
         frame.setVisible(true);
     }
 
     private void promptAIDifficulty() {
-        // Prompt the user for AI difficulty (1 to 10)
-        String input = JOptionPane.showInputDialog(frame, 
-                "Select AI difficulty (1 - Easy, 10 - Hard):", 
-                "AI Difficulty", 
-                JOptionPane.QUESTION_MESSAGE);
-    
-        // Check if the user cancelled or closed the dialog (input is null)
+        String input = JOptionPane.showInputDialog(frame, "Enter AI difficulty (1-10):");
         if (input == null) {
-            resetToMenu(); // Return to main menu if the user cancels
+            // User pressed cancel, return to the main menu
+            resetToMenu();
             return;
         }
-    
         try {
             aiDifficulty = Integer.parseInt(input);
             if (aiDifficulty < 1 || aiDifficulty > 10) {
@@ -77,57 +73,53 @@ public class TicTacToeGame {
             JOptionPane.showMessageDialog(frame, "Invalid input. Please enter a number between 1 and 10.");
             promptAIDifficulty(); // Prompt again in case of invalid input
         }
-    }    
+    }
 
     private void initializeGame() {
         // Initialize game components after the mode has been selected
-        board = new TicTacToeBoard();
-        buttons = new JButton[3][3];
+        board = new ConnectFourBoard();
+        buttons = new JButton[6][7];
         currentPlayer = "X"; // Player X starts
-        xWins = 0;
-        oWins = 0;
-        draws = 0;
 
-        // Create the main game frame for Tic Tac Toe
+        // Create the main game frame for Connect Four
         frame.getContentPane().removeAll(); // Clear previous components
         frame.setLayout(new BorderLayout());
 
         // Create the score label
-        scoreLabel = new JLabel("X Wins: 0   O Wins: 0   Draws: 0", JLabel.CENTER);
+        scoreLabel = new JLabel("X Wins: " + xWins + "   O Wins: " + oWins + "   Draws: " + draws, JLabel.CENTER);
         scoreLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 
         // Add the score label to the frame
         frame.add(scoreLabel, BorderLayout.NORTH);
 
-        // Create the panel to hold the Tic Tac Toe buttons
-        JPanel gamePanel = new JPanel(new GridLayout(3, 3));
+        JPanel gamePanel = new JPanel(new GridLayout(6, 7));
 
-        // Initialize the buttons for the Tic Tac Toe grid
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 7; col++) {
                 buttons[row][col] = new JButton(" ");
-                buttons[row][col].setFont(new Font("Arial", Font.PLAIN, 60));
+                buttons[row][col].setFont(new Font("Arial", Font.PLAIN, 40));
                 buttons[row][col].setFocusPainted(false);
-                buttons[row][col].setBackground(Color.WHITE);
-                
-                final int r = row;
-                final int c = col;
                 buttons[row][col].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        onCellClicked(r, c);
+                        JButton buttonClicked = (JButton) e.getSource();
+                        int col = getButtonColumn(buttonClicked);
+                        if (gameMode.equals("Player")) {
+                            handlePlayerMove(col);
+                        } else if (gameMode.equals("AI")) {
+                            handlePlayerMove(col);
+                            handleAIMove();
+                        }
                     }
                 });
-                
                 gamePanel.add(buttons[row][col]);
             }
         }
 
-        // Add the game panel to the frame
         frame.add(gamePanel, BorderLayout.CENTER);
 
         // Resize window for the game
-        frame.setSize(500, 500); // Increase window size
+        frame.setSize(700, 600); // Increase window size
         frame.setVisible(true);
 
         // Add "Back to Main Menu" button
@@ -140,11 +132,6 @@ public class TicTacToeGame {
         });
 
         frame.add(backToMenuButton, BorderLayout.SOUTH);
-
-        // Start the game loop if AI is selected and it's AI's turn
-        if (gameMode.equalsIgnoreCase("AI") && currentPlayer.equals("O")) {
-            aiMove(); // AI's move
-        }
     }
 
     private void resetToMenu() {
@@ -152,8 +139,13 @@ public class TicTacToeGame {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
+        // Reset scores and game state
+        xWins = 0;
+        oWins = 0;
+        draws = 0;
+
         JPanel modePanel = new JPanel(new GridLayout(1, 2));
-        
+
         JButton playerButton = new JButton("Player vs Player");
         JButton aiButton = new JButton("Player vs AI");
 
@@ -177,7 +169,7 @@ public class TicTacToeGame {
         modePanel.add(aiButton);
 
         frame.add(modePanel, BorderLayout.CENTER);
-        frame.setSize(400, 200);
+        frame.setSize(400, 200); // Set size for mode selection window
         frame.setVisible(true);
 
         // Return to main menu
@@ -185,64 +177,71 @@ public class TicTacToeGame {
         new GameMenu(frame.getLocation());
     }
 
-    private void onCellClicked(int row, int col) {
-        int space = row * 3 + col + 1;
+    private int getButtonColumn(JButton button) {
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 7; col++) {
+                if (buttons[row][col] == button) {
+                    return col;
+                }
+            }
+        }
+        return -1;
+    }
 
-        if (board.setSpace(space, currentPlayer)) {
-            buttons[row][col].setText(currentPlayer);
-
+    private void handlePlayerMove(int col) {
+        if (board.setSpace(col, currentPlayer)) {
+            updateBoardUI();
             if (board.hasWon(currentPlayer)) {
-                JOptionPane.showMessageDialog(frame, currentPlayer + " Wins!");
+                JOptionPane.showMessageDialog(frame, "Player " + currentPlayer + " wins!");
                 updateScore(currentPlayer);
-                resetGame();
+                resetGame(); // Reset the game
             } else if (board.gameIsOver()) {
-                JOptionPane.showMessageDialog(frame, "Game Over! It's a draw.");
+                JOptionPane.showMessageDialog(frame, "It's a draw!");
                 draws++;
                 updateScoreDisplay();
-                resetGame();
+                resetGame(); // Reset the game
             } else {
-                currentPlayer = currentPlayer.equals("X") ? "O" : "X"; // Switch players
-                if (gameMode.equalsIgnoreCase("AI") && currentPlayer.equals("O")) {
-                    aiMove(); // AI makes its move if it's "O"'s turn
-                }
+                currentPlayer = currentPlayer.equals("X") ? "O" : "X";
             }
         }
     }
 
-    private void aiMove() {
-        // Make AI move (Minimax algorithm)
-        System.out.println(aiDifficulty);
+    private void handleAIMove() {
+        // Use minimax to determine the best move for the AI
         int[] bestMove = board.minimax(false, aiDifficulty, Integer.MIN_VALUE, Integer.MAX_VALUE); // AI plays as "O", use the difficulty level for depth
         int bestMovePosition = bestMove[1];
-        int[] rowAndCol = board.getSpotOnBoard(bestMovePosition);
-        int row = rowAndCol[0];
-        int col = rowAndCol[1];
-    
-        // Perform the AI move
-        board.setSpace(bestMovePosition, "O");
-        buttons[row][col].setText("O");
-    
-        // Check if the AI won or if the game is over
-        if (board.hasWon("O")) {
-            JOptionPane.showMessageDialog(frame, "O Wins!");
-            updateScore("O");
-            resetGame();
-        } else if (board.gameIsOver()) {
-            JOptionPane.showMessageDialog(frame, "Game Over! It's a draw.");
-            draws++;
-            updateScoreDisplay();
-            resetGame();
-        } else {
-            currentPlayer = "X"; // Switch back to player X
+        if (bestMovePosition != -1) {
+            board.setSpace(bestMovePosition, "O");
+            updateBoardUI();
+            if (board.hasWon("O")) {
+                JOptionPane.showMessageDialog(frame, "AI wins!");
+                updateScore("O");
+                resetGame(); // Reset the game
+            } else if (board.gameIsOver()) {
+                JOptionPane.showMessageDialog(frame, "It's a draw!");
+                draws++;
+                updateScoreDisplay();
+                resetGame(); // Reset the game
+            } else {
+                currentPlayer = "X"; // Switch back to player X
+            }
         }
-    }    
+    }
+
+    private void updateBoardUI() {
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 7; col++) {
+                buttons[row][col].setText(board.getBoardLayout()[row][col]);
+            }
+        }
+    }
 
     private void resetGame() {
-        board = new TicTacToeBoard();
+        board = new ConnectFourBoard();
         currentPlayer = "X"; // Reset to player "X"
 
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 7; col++) {
                 buttons[row][col].setText(" ");
             }
         }

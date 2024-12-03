@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class TicTacToeBoard {
+public class TicTacToeBoard extends Board {
 
     private String[][] board = {{" ", " ", " "},
                                  {" ", " ", " "},
@@ -19,16 +19,12 @@ public class TicTacToeBoard {
         }
         this.board = filledBoard;
     }
-    
-    private String[][] getBoardLayout() {
-        return board;
+
+    public Board cloneBoard() {
+        return new TicTacToeBoard(board);
     }
 
-    public TicTacToeBoard cloneBoard() {
-        return new TicTacToeBoard(getBoardLayout());
-    }
-
-    public int[] availableMoves() {
+    public ArrayList<Integer> availableMoves() {
         ArrayList<Integer> movesList = new ArrayList<>();
 
         for (int row = 0; row < board.length; row++) {
@@ -39,12 +35,7 @@ public class TicTacToeBoard {
             }
         }
 
-        int[] moves = new int[movesList.size()];
-        for (int i = 0; i < moves.length; i++) {
-            moves[i] = movesList.get(i);
-        }
-
-        return moves;
+        return movesList;
     }
 
     public int[] getSpotOnBoard(int space) {
@@ -81,7 +72,7 @@ public class TicTacToeBoard {
     }
 
     public boolean gameIsOver() {
-        return availableMoves().length == 0 || hasWon("X") || hasWon("O");
+        return availableMoves().size() == 0 || hasWon("X") || hasWon("O");
     }
 
     public int evaluateBoard() {
@@ -89,30 +80,4 @@ public class TicTacToeBoard {
         else if (hasWon("O")) return -1;
         else return 0;
     }
-
-    public int[] minimax(boolean isMaximizing, int depth) {
-        int bestValue = 0;
-        int bestMove = 0;
-        String symbol = isMaximizing ? "X" : "O";
-    
-        if (gameIsOver() || depth == 0) {
-            return new int[] { evaluateBoard(), 0 };
-        }
-    
-        bestValue = isMaximizing ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-    
-        for (int move : availableMoves()) {
-            TicTacToeBoard newBoard = cloneBoard();
-            newBoard.setSpace(move, symbol);
-    
-            int hypotheticalValue = newBoard.minimax(!isMaximizing, depth - 1)[0];
-    
-            if ((isMaximizing && hypotheticalValue > bestValue) || (!isMaximizing && hypotheticalValue < bestValue)) {
-                bestValue = hypotheticalValue;
-                bestMove = move;
-            }
-        }
-    
-        return new int[] { bestValue, bestMove };
-    }    
 }
