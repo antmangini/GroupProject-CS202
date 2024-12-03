@@ -20,6 +20,10 @@ public class TicTacToeBoard extends Board {
         this.board = filledBoard;
     }
 
+    public String[][] getBoardLayout() {
+        return board;
+    }
+
     public Board cloneBoard() {
         return new TicTacToeBoard(board);
     }
