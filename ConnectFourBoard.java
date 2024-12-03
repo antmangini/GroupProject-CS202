@@ -26,14 +26,12 @@ public class ConnectFourBoard extends Board {
         this.board = filledBoard;
     }
 
-    
     public String[][] getBoardLayout() {
         return board;
     }
 
-    
     public Board cloneBoard() {
-        return new ConnectFourBoard(getBoardLayout());
+        return new ConnectFourBoard(board);
     }
 
     // Helper method to get the available row for a given column
@@ -46,7 +44,6 @@ public class ConnectFourBoard extends Board {
         return -1; // If no space is available in the column
     }
 
-    
     public ArrayList<Integer> availableMoves() {
         ArrayList<Integer> movesList = new ArrayList<>();
         for (int col = 0; col < 7; col++) {

@@ -2,8 +2,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 public abstract class Board {
 
-    
-
     abstract public boolean setSpace(int space, String player);
     abstract public boolean hasWon(String player);
     abstract public boolean gameIsOver();
