@@ -211,7 +211,6 @@ public class TicTacToeGame {
 
     private void aiMove() {
         // Make AI move (Minimax algorithm)
-        System.out.println(aiDifficulty);
         int[] bestMove = board.minimax(false, aiDifficulty, Integer.MIN_VALUE, Integer.MAX_VALUE); // AI plays as "O", use the difficulty level for depth
         int bestMovePosition = bestMove[1];
         int[] rowAndCol = board.getSpotOnBoard(bestMovePosition);
