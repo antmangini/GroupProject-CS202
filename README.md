@@ -5,7 +5,7 @@ This project implements two classic board games, Connect Four and Tic Tac Toe, w
 1. Player vs Player – Two players can play the game on the same device.
 2. Player vs AI – A human player competes against an AI, with adjustable difficulty.
 
-The project uses the Minimax algorithm with Alpha-Beta pruning to enable the AI to make intelligent moves in Connect Four. It also provides a clean and interactive user experience with score tracking and game resets.
+The project uses the Minimax algorithm with Alpha-Beta pruning to enable the AI to make intelligent moves in Connect Four and Tic Tac Toe. It also provides a clean and interactive user experience with score tracking and game resets.
 
 ## File Structure
 <ul>
