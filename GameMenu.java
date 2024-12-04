@@ -1,7 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class GameMenu {
     private JFrame frame;
@@ -12,7 +12,6 @@ public class GameMenu {
         frame.setLayout(new BorderLayout());
         frame.setLocation(location);
 
-        // Create a panel for the game selection buttons
         JPanel menuPanel = new JPanel(new GridLayout(1, 2));
         
         JButton ticTacToeButton = new JButton("Tic Tac Toe");

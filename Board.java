@@ -20,7 +20,7 @@ public abstract class Board {
         if (gameIsOver() || depth == 0) return new int[] { evaluateBoard(), bestMove };
         
         ArrayList<Integer> moves = availableMoves();
-        Collections.shuffle(moves); // Optional: Shuffle moves to prevent AI from choosing predictable patterns
+        Collections.shuffle(moves);
         for (Integer move : moves) {
             Board newBoard = cloneBoard();
             newBoard.setSpace(move, symbol);
