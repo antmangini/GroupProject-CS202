@@ -51,7 +51,7 @@ public abstract class Board {
                 beta = Math.min(beta, bestValue);
             }
     
-            // Alpha-Beta pruning: stop exploring this branch if it won't be better than the current one
+            // Alpha-Beta pruning: This means we stop exploring this branch once we can't find a better one
             if (beta <= alpha) break;
             
         }
